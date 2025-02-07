@@ -7,9 +7,17 @@ app.get('/', (req, res) => {//inicio do metodo get
     let peso = req.query.peso
     let altura = req.query.altura
 
-    let imc = calculadoraImc.efetuarCalculoImc(peso, altura)//funcao chamada atraves da constante calcular IMC
-    
-    res.json({imc: imc})
+    if(calculadoraImc.validaParametro(req.query.peso) && calculadoraImc.validaParametro(req.query.altura)){
+    let imc = calculadoraImc.efetuarCalculoImc(peso, altura);
+    let status = calculadoraImc.retornaStatusImc(imc);
+
+    let json = {imc: imc, status: status};
+
+    res.json(json);
+
+    } else {
+        res.status(400).json({'Erro': 'Peso ou altura inválidos.'})
+    }
 })
 
 app.listen(8080, () => {//escuta todas as requisições HTTP feitas a API
