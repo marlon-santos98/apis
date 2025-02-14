@@ -18,10 +18,9 @@ const app = express()
 let retornaAno = require('./servico/servico')
 
 app.get('/', (req, res) => {
-    let anoFato = req.query.anoFato
-
-    let anoCompleto = retornaAno.retornaAno(anoFato)
-    res.json({ano: anoCompleto})
+    let ano = req.query.ano
+    let fato = retornaAno.buscaFato(ano)
+    res.json({ano: fato})
 })
 
 app.listen((8080), () => {
