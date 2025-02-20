@@ -8,7 +8,7 @@ app.get('/ufs', (req, res) => {
     if(resultado.length > 0){
         res.json(resultado)
     } else{
-        res.status(404).send({"erro":"Uf não encontrada"})
+        res.status(404).send({"erro":"Uf não encontrada!"})
     }
 })
 
