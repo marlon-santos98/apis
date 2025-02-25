@@ -1,45 +1,67 @@
-const historicoInflacao = require("../dados/dados");
+import historicoInflacao from '../dados/dados.js';
 
-const retornaColecao = () => {
-    return historicoInflacao
+export const buscarHistorico = () => {
+  return historicoInflacao;
 }
 
-const retornaColecaoAno = (ano) => {
-    const idAno = parseInt(ano)
-    const anoColecao = historicoInflacao.filter(item => item.ano === idAno)
-    return anoColecao
-}
+export const buscarHistoricoPorId = (id) => {
+  const idHistorico = parseInt(id);
+  const historico = historicoInflacao.find(historico => historico.id === idHistorico);
 
-const retornaColecaoId = (id) => {
-    const idColecao = parseInt(id)
-    const anoColecaoId = historicoInflacao.find(item => item.id === idColecao)
-    return anoColecaoId
-}
+  return historico;
+};
 
-const calculoIpca = (valor, dataInicialMes, dataInicialAno, dataFinalMes, dataFinalAno) => {
-    const historicoFiltrado = historicoInflacao.filter(
-      historico => {
-        if (dataInicialAno === dataFinalAno) {
-          return historico.ano === dataInicialAno && historico.mes >= dataInicialMes && historico.mes <= dataFinalMes;
-        } else {
-          return (
-            (historico.ano === dataInicialAno && historico.mes >= dataInicialMes) ||
-            (historico.ano > dataInicialAno && historico.ano < dataFinalAno) ||
-            (historico.ano === dataFinalAno && historico.mes <= dataFinalMes)
-          );
-        }
+export const buscarHistoricoPorAno = (ano) => {
+  const anoHistorico = parseInt(ano);
+  const historico = historicoInflacao.filter(historico => historico.ano === anoHistorico);
+
+  return historico;
+};
+
+export const calcularReajuste = (valor, dataInicialMes, dataInicialAno, dataFinalMes, dataFinalAno) => {
+  const historicoFiltrado = historicoInflacao.filter(
+    historico => {
+      if (dataInicialAno === dataFinalAno) {
+        return historico.ano === dataInicialAno && historico.mes >= dataInicialMes && historico.mes <= dataFinalMes;
+      } else {
+        return (
+          (historico.ano === dataInicialAno && historico.mes >= dataInicialMes) ||
+          (historico.ano > dataInicialAno && historico.ano < dataFinalAno) ||
+          (historico.ano === dataFinalAno && historico.mes <= dataFinalMes)
+        );
       }
-    );
-  
-    let taxasMensais = 1;
-    for (const elemento of historicoFiltrado) {
-      taxasMensais *= (elemento.ipca / 100) + 1;
     }
-  
-    const resultado = valor * taxasMensais;
-    return parseFloat(resultado.toFixed(2));
-  };
-  
+  );
 
+  let taxasMensais = 1;
+  for (const elemento of historicoFiltrado) {
+    taxasMensais *= (elemento.ipca / 100) + 1;
+  }
 
-module.exports = { retornaColecao, retornaColecaoAno, retornaColecaoId, calculoIpca }
+  const resultado = valor * taxasMensais;
+  return parseFloat(resultado.toFixed(2));
+};
+
+export const validacaoErro = (valor, dataInicialMes, dataInicialAno, dataFinalMes, dataFinalAno) => {
+  const anoLimiteFinal = historicoInflacao[historicoInflacao.length - 1].ano;
+  const anoLimiteInicial = historicoInflacao[0].ano
+  const mesLimiteFinal = historicoInflacao[historicoInflacao.length - 1].mes;
+  if (
+    isNaN(valor) ||
+    isNaN(dataInicialMes) ||
+    isNaN(dataInicialAno) ||
+    isNaN(dataFinalMes) ||
+    isNaN(dataFinalAno) ||
+    dataInicialMes < 1 || dataInicialMes > 12 ||
+    dataInicialAno < anoLimiteInicial || dataInicialAno > anoLimiteFinal ||
+    dataFinalMes < 1 || dataFinalMes > 12 ||
+    dataFinalAno < anoLimiteInicial || dataFinalAno > anoLimiteFinal ||
+    (dataFinalAno === anoLimiteFinal && dataFinalMes > mesLimiteFinal) ||
+    dataFinalAno < dataInicialAno ||
+    (dataFinalAno == dataInicialAno && dataFinalMes < dataInicialMes)
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+};
