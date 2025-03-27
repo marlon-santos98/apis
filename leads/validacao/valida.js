@@ -6,7 +6,9 @@ function validaNome(nome){
 }
 
 function validaEmail(email){
-    const isValid = email !== '' ? true : false
+    const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+
+    const isValid = regexEmail.test(email)
     return isValid
 }
 
