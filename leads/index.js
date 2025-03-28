@@ -1,5 +1,4 @@
 import express from 'express'
-import pool from './servicos/conexao.js'
 import { validaUsuario } from './validacao/valida.js'
 import { cadastraLead } from './servicos/cadastro_servico.js'
 
